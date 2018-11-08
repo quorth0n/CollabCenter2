@@ -42,12 +42,16 @@ export default function register() {
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
-        navigator.serviceWorker.ready.then(() => {
-          console.log(
-            'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit https://goo.gl/SC7cgQ'
-          );
-        });
+        navigator.serviceWorker.ready
+          .then(() => {
+            console.log(
+              'This web app is being served cache-first by a service ' +
+                'worker. To learn more, visit https://goo.gl/SC7cgQ'
+            );
+          })
+          .catch(e => {
+            console.error('Error occured: ', e);
+          });
       } else {
         // Is not local host. Just register service worker
         registerValidSW(swUrl);
@@ -97,11 +101,20 @@ function checkValidServiceWorker(swUrl: string) {
         response.headers.get('content-type')!.indexOf('javascript') === -1
       ) {
         // No service worker found. Probably a different app. Reload the page.
-        navigator.serviceWorker.ready.then(registration => {
-          registration.unregister().then(() => {
-            window.location.reload();
+        navigator.serviceWorker.ready
+          .then(registration => {
+            registration
+              .unregister()
+              .then(() => {
+                window.location.reload();
+              })
+              .catch(e => {
+                console.error('Error occured: ', e);
+              });
+          })
+          .catch(e => {
+            console.error('Error occured: ', e);
           });
-        });
       } else {
         // Service worker found. Proceed as normal.
         registerValidSW(swUrl);
@@ -116,8 +129,14 @@ function checkValidServiceWorker(swUrl: string) {
 
 export function unregister() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.unregister();
-    });
+    navigator.serviceWorker.ready
+      .then(registration => {
+        registration.unregister().catch(e => {
+          console.error('Error occured: ', e);
+        });
+      })
+      .catch(e => {
+        console.error('Error occured: ', e);
+      });
   }
 }
