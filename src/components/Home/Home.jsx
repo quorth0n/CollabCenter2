@@ -1,5 +1,6 @@
 import { Layout, Select, Button } from 'antd';
 import { slide as Burger } from 'react-burger-menu';
+import { Link } from 'react-router-dom';
 import * as React from 'react';
 
 import 'antd/dist/antd.css';
@@ -10,8 +11,8 @@ const Option = Select.Option;
 
 // import logo from './logo.svg';
 
-const index = () => {
-  // const [collapsed, setCollapsed] = React.useState(true);
+export const Home = () => {
+  const [lang, setLang] = React.useState('js');
 
   return (
     <div>
@@ -48,11 +49,14 @@ const index = () => {
                 placeholder="Language"
                 optionFilterProp="children"
                 filterOption={true}
+                onChange={setLang}
               >
                 <Option value="js">Js</Option>
                 <Option value="ts">Ts</Option>
               </Select>{' '}
-              <Button type="primary">Create</Button>
+              <Link to={`/doc/${lang}`}>
+                <Button type="primary">Create</Button>
+              </Link>
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Collab.Center ©2018</Footer>
@@ -61,5 +65,3 @@ const index = () => {
     </div>
   );
 };
-
-export default index;
