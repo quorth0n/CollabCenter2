@@ -1,12 +1,16 @@
-import { Layout, Menu, Breadcrumb, Icon } from 'antd';
+import { Layout } from 'antd';
 import Helmet from 'react-helmet';
+import { Route } from 'react-router';
 import * as React from 'react';
+
+import SetLang from './decorators/SetLang';
 
 import './Doc.css';
 
-const { Header, Content, Sider } = Layout;
+const { Header, Sider } = Layout;
 
 export const Doc = ({ match }) => {
+  const [lang, setLang] = React.useState('');
 
   React.useEffect(() => {
     if (!window.firebase.apps.length) {
@@ -21,48 +25,65 @@ export const Doc = ({ match }) => {
       window.firebase.initializeApp(config);
     }
 
-    const firepadRef = window.firebase.database().ref(`docs/`).child(match.params.padid);
+    const firepadRef = window.firebase
+      .database()
+      .ref('docs/')
+      .child(match.params.padid);
 
-    const codeMirror = window.CodeMirror(document.getElementById('firepad-container'), {
-      lineNumbers: true,
-      styleActiveLine: true,
-      matchBrackets: true,
-      mode: 'text/x-go',
-    });
+    firepadRef
+      .child('lang')
+      .once('value')
+      .then(snap => {
+        setLang(snap.val());
+      });
+
+    const codeMirror = window.CodeMirror(
+      document.getElementById('firepad-container'),
+      {
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        mode: lang
+      }
+    );
 
     const userId = Math.floor(Math.random() * 9999999999).toString();
     const firepad = window.Firepad.fromCodeMirror(firepadRef, codeMirror, {
       userId: userId
     });
-    firepad.on('ready', function () {
+    firepad.on('ready', function() {
       if (firepad.isHistoryEmpty()) {
         firepad.setHtml('function () {\nconsole.log("test");\n}');
       }
     });
 
-    const firepadUserList = window.FirepadUserList.fromDiv(firepadRef.child('users'), document.getElementById('firepad-userlist'), userId);
-
+    window.FirepadUserList.fromDiv(
+      firepadRef.child('users'),
+      document.getElementById('firepad-userlist'),
+      userId
+    );
   });
 
   return (
     <Layout style={{ overflow: 'hidden', height: '100vh' }}>
       <Helmet>
-        <script src={`https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/${'go'}/${'go.js'}`}></script>
+        <script
+          src={`https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/${lang}/${lang}.js`}
+        />
       </Helmet>
       <Header>
         <h1>Collab.Center</h1>
       </Header>
       <Layout>
         <Sider width={200}>
-          <div id="firepad-userlist" style={{ height: '100%' }}></div>
+          <div id="firepad-userlist" style={{ height: '100%' }} />
         </Sider>
-        <Layout >
-          <div id="firepad-container" style={{ height: '100%' }}></div>
+        <Layout>
+          <div id="firepad-container" style={{ height: '100%' }} />
         </Layout>
       </Layout>
 
-      <Route path={`${match.path}/:lang`} component={withSetLang} />
+      <Route path={`${match.path}/:lang`} component={SetLang} />
     </Layout>
   );
-
 };
