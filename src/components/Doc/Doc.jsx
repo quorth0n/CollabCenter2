@@ -10,8 +10,6 @@ import './Doc.css';
 const { Header, Sider } = Layout;
 
 export const Doc = ({ match }) => {
-  const [lang, setLang] = React.useState('');
-
   React.useEffect(() => {
     if (!window.firebase.apps.length) {
       const config = {
@@ -30,20 +28,20 @@ export const Doc = ({ match }) => {
       .ref('docs/')
       .child(match.params.padid);
 
-    firepadRef
-      .child('lang')
-      .once('value')
-      .then(snap => {
-        setLang(snap.val());
-      });
+    firepadRef.once('value').then(snap => {
+      const lang = snap.val().lang;
+      codeMirror.setOption('mode', lang);
+      window.CodeMirror.autoLoadMode(codeMirror, lang);
+    });
 
+    window.CodeMirror.modeURL =
+      'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/%N/%N.js';
     const codeMirror = window.CodeMirror(
       document.getElementById('firepad-container'),
       {
         lineNumbers: true,
         styleActiveLine: true,
-        matchBrackets: true,
-        mode: lang
+        matchBrackets: true
       }
     );
 
@@ -62,15 +60,10 @@ export const Doc = ({ match }) => {
       document.getElementById('firepad-userlist'),
       userId
     );
-  });
+  }, []);
 
   return (
     <Layout style={{ overflow: 'hidden', height: '100vh' }}>
-      <Helmet>
-        <script
-          src={`https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/${lang}/${lang}.js`}
-        />
-      </Helmet>
       <Header>
         <h1>Collab.Center</h1>
       </Header>
