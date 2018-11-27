@@ -1,4 +1,5 @@
 import { Layout, Select, Button } from 'antd';
+import { v4 } from 'uuid';
 import { slide as Burger } from 'react-burger-menu';
 import { Link } from 'react-router-dom';
 import * as React from 'react';
@@ -51,10 +52,16 @@ export const Home = () => {
                 filterOption={true}
                 onChange={setLang}
               >
-                <Option value="js">Js</Option>
-                <Option value="ts">Ts</Option>
+                {window.CodeMirror.modeInfo.map(mode => (
+                  <Option
+                    key={mode.mode}
+                    value={mode.mime !== 'null' ? mode.mime : mode.mode}
+                  >
+                    {mode.name}
+                  </Option>
+                ))}
               </Select>{' '}
-              <Link to={`/doc/${lang}`}>
+              <Link to={`/doc/${v4()}/${lang.replace(/\//g, '%2F')}`}>
                 <Button type="primary">Create</Button>
               </Link>
             </div>
