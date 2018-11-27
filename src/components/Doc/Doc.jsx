@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import Helmet from 'react-helmet';
+// import Helmet from 'react-helmet';
 import { Route } from 'react-router';
 import * as React from 'react';
 
@@ -29,9 +29,9 @@ export const Doc = ({ match }) => {
       .child(match.params.padid);
 
     firepadRef.once('value').then(snap => {
-      const lang = snap.val().lang;
-      codeMirror.setOption('mode', lang);
-      window.CodeMirror.autoLoadMode(codeMirror, lang);
+      const lang = window.CodeMirror.findModeByMIME(`text/${snap.val().lang}`);
+      codeMirror.setOption('mode', `text/${snap.val().lang}`);
+      window.CodeMirror.autoLoadMode(codeMirror, lang.mode);
     });
 
     window.CodeMirror.modeURL =
