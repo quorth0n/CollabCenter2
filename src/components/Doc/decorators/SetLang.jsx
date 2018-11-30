@@ -20,7 +20,7 @@ export default ({ match }) => {
       .ref('docs/')
       .child(match.params.padid)
       .set({
-        lang: match.params.lang
+        lang: match.params.lang.replace('%2F', '/')
       });
   });
 

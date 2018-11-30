@@ -1,4 +1,5 @@
 import { Layout } from 'antd';
+// import Helmet from 'react-helmet';
 import { Route } from 'react-router';
 import * as React from 'react';
 
@@ -28,8 +29,8 @@ export const Doc = ({ match }) => {
       .child(match.params.padid);
 
     firepadRef.once('value').then(snap => {
-      const lang = window.CodeMirror.findModeByMIME(snap.val().lang);
-      codeMirror.setOption('mode', snap.val().lang);
+      const lang = window.CodeMirror.findModeByMIME(`text/${snap.val().lang}`);
+      codeMirror.setOption('mode', `text/${snap.val().lang}`);
       window.CodeMirror.autoLoadMode(codeMirror, lang.mode);
     });
 
@@ -40,8 +41,7 @@ export const Doc = ({ match }) => {
       {
         lineNumbers: true,
         styleActiveLine: true,
-        matchBrackets: true,
-        theme: 'cobalt'
+        matchBrackets: true
       }
     );
 
@@ -51,9 +51,7 @@ export const Doc = ({ match }) => {
     });
     firepad.on('ready', function() {
       if (firepad.isHistoryEmpty()) {
-        firepad.setHtml(
-          "/* Hello, and Welcome to Collab.Center! This is how it works:<br> 1. Put some code here.<br> 2. Share the URL with your friends so you can collaborate.<br> 3. Toggle some options above.<br> That's all there is to it! */"
-        );
+        firepad.setHtml('function () {\nconsole.log("test");\n}');
       }
     });
 
