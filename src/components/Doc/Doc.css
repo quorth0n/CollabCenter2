@@ -99,3 +99,7 @@ input.firepad-userlist-name-input {
   width: 95px;
   font-size: 13px;
 }
+
+.powered-by-firepad {
+  display: none !important;
+}

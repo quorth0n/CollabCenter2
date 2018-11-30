@@ -1,5 +1,5 @@
 import { Layout, Select, Button } from 'antd';
-import { slide as Burger } from 'react-burger-menu';
+import { v4 } from 'uuid';
 import { Link } from 'react-router-dom';
 import * as React from 'react';
 
@@ -16,21 +16,16 @@ export const Home = () => {
 
   return (
     <div>
-      <Burger>
-        <a id="home" className="menu-item" href="/">
-          Home
-        </a>
-      </Burger>
-      <Layout style={{ height: '100vh' }}>
+      <Layout style={{ overflow: 'hidden', height: '100vh' }}>
         <Layout>
-          <Header style={{ background: '#fff' }}>
-            <h1>Collab.Center</h1>
+          <Header>
+            <h1>Collab.Center (v2)</h1>
           </Header>
           <Content style={{ margin: '0 16px' }}>
             <div
               style={{
                 background: '#fff',
-                fontSize: 16,
+                fontSize: '1.5em',
                 minHeight: 360,
                 padding: 24
               }}
@@ -44,18 +39,24 @@ export const Home = () => {
               nulla, lacinia id convallis eu, auctor ut enim.
               <hr />
               <Select
-                style={{ width: 200 }}
+                style={{ width: '50vw', height: '1.5em' }}
                 showSearch={true}
                 placeholder="Language"
                 optionFilterProp="children"
                 filterOption={true}
                 onChange={setLang}
               >
-                <Option value="js">Js</Option>
-                <Option value="ts">Ts</Option>
+                {window.CodeMirror.modeInfo.map(mode => (
+                  <Option
+                    key={mode.mode}
+                    value={mode.mime !== 'null' ? mode.mime : mode.mode}
+                  >
+                    {mode.name}
+                  </Option>
+                ))}
               </Select>{' '}
-              <Link to={`/doc/${lang}`}>
-                <Button type="primary">Create</Button>
+              <Link to={`/doc/${v4()}/${lang.replace(/\//g, '%2F')}`}>
+                <Button type="primary">Create!</Button>
               </Link>
             </div>
           </Content>
